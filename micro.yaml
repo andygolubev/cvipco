@@ -1,7 +1,7 @@
 AWSTemplateFormatVersion: "2010-09-09"
 
 Resources:
-  VPC:
+  myVPC:
     Type: AWS::EC2::VPC
     Properties:
       CidrBlock: "10.0.0.0/16"
@@ -13,7 +13,7 @@ Resources:
   PublicSubnet1:
     Type: AWS::EC2::Subnet
     Properties:
-      VpcId: !Ref VPC
+      VpcId: !Ref myVPC
       CidrBlock: "10.0.1.0/24"
       MapPublicIpOnLaunch: true
       Tags:
@@ -23,7 +23,7 @@ Resources:
   PublicSubnet2:
     Type: AWS::EC2::Subnet
     Properties:
-      VpcId: !Ref VPC
+      VpcId: !Ref myVPC
       CidrBlock: "10.0.2.0/24"
       MapPublicIpOnLaunch: true
       Tags:
@@ -34,7 +34,7 @@ Resources:
   PrivateSubnet1:
     Type: AWS::EC2::Subnet
     Properties:
-      VpcId: !Ref VPC
+      VpcId: !Ref myVPC
       CidrBlock: 10.0.3.0/24
       MapPublicIpOnLaunch: false
       Tags:
@@ -44,24 +44,74 @@ Resources:
   PrivateSubnet2:
     Type: AWS::EC2::Subnet
     Properties:
-      VpcId: !Ref VPC
+      VpcId: !Ref myVPC
       CidrBlock: 10.0.4.0/24
       MapPublicIpOnLaunch: false
       Tags:
         - Key: Name
           Value: private2
 
-  Ec2Instance:
+  Ec2Instance01:
     Type: AWS::EC2::Instance
     Properties:
       InstanceType: t2.micro
-      ImageId: ami-467ca739 # Amazon Linux AMI in N.Virginia
+      ImageId: ami-0b0dcb5067f052a63 # Amazon Linux 2 Kernel 5.10 AMI 2.0.20221103.3 x86_64 HVM gp2
       Tags:
         - Key: Name
-          Value: A simple example
+          Value: PublicSubnet1 instance t2
+      NetworkInterfaces:
+        - SubnetId: !Ref PublicSubnet1
+          DeviceIndex: '0'
+
+  Ec2Instance02:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t3.micro
+      ImageId: ami-0b0dcb5067f052a63 #Amazon Linux 2 Kernel 5.10 AMI 2.0.20221103.3 x86_64 HVM gp2
+      Tags:
+        - Key: Name
+          Value: PublicSubnet2 instance t3  
+      NetworkInterfaces:
+        - SubnetId: !Ref PublicSubnet2
+          DeviceIndex: '0'
+      UserData:
+        Fn::Base64: 
+          !Sub |
+            #!/bin/bash
+            yum update -y
+            yum install -y httpd.x86_64
+            systemctl start httpd.service
+            systemctl enable httpd.service
+            echo ?Hello World from $(hostname -f)?
+
+  DemoSecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      VpcId: !Ref myVPC
+      GroupDescription: SG to allow SSH access via port 22
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: '22'
+          ToPort: '22'
+          CidrIp: '10.0.2.0/24'
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 10.0.2.0/24
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 10.0.2.0/24
+      Tags:
+        - Key: Name
+          Value: EC2-SG
 
 Mappings:
   RegionMap:
-    us-east-1:
-      AMI: ami-1853ac65
+    us-east-1a:
+      AMI: ami-0b0dcb5067f052a63
 
+Outputs:
+  DemoInstanceId:
+    Description: Instance Id 
+    Value: !Ref Ec2Instance02
