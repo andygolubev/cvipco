@@ -61,7 +61,7 @@ Resources:
           Value: PublicSubnet1 instance t2
       NetworkInterfaces:
         - SubnetId: !Ref PublicSubnet1
-          DeviceIndex: '0'
+          DeviceIndex: 0
 
   Ec2Instance02:
     Type: AWS::EC2::Instance
@@ -97,11 +97,11 @@ Resources:
         - IpProtocol: tcp
           FromPort: 80
           ToPort: 80
-          CidrIp: 10.0.2.0/0
+          CidrIp: 0.0.0.0/0
         - IpProtocol: tcp
           FromPort: 443
           ToPort: 443
-          CidrIp: 10.0.2.0/24
+          CidrIp: 0.0.0.0/0
       Tags:
         - Key: Name
           Value: EC2-SG
