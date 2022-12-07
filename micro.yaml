@@ -4,7 +4,7 @@ Resources:
   myVPC:
     Type: AWS::EC2::VPC
     Properties:
-      CidrBlock: "10.0.0.0/16"
+      CidrBlock: 10.0.0.0/16
       Tags:
         - Key: Name
           Value: myVPC
@@ -14,7 +14,7 @@ Resources:
     Type: AWS::EC2::Subnet
     Properties:
       VpcId: !Ref myVPC
-      CidrBlock: "10.0.1.0/24"
+      CidrBlock: 10.0.1.0/24
       MapPublicIpOnLaunch: true
       Tags:
         - Key: Name
@@ -24,7 +24,7 @@ Resources:
     Type: AWS::EC2::Subnet
     Properties:
       VpcId: !Ref myVPC
-      CidrBlock: "10.0.2.0/24"
+      CidrBlock: 10.0.2.0/24
       MapPublicIpOnLaunch: true
       Tags:
         - Key: Name
@@ -73,31 +73,31 @@ Resources:
           Value: PublicSubnet2 instance t3  
       NetworkInterfaces:
         - SubnetId: !Ref PublicSubnet2
-          DeviceIndex: '0'
+          DeviceIndex: 0
       UserData:
         Fn::Base64: 
           !Sub |
             #!/bin/bash
-            yum update -y
-            yum install -y httpd.x86_64
-            systemctl start httpd.service
-            systemctl enable httpd.service
+            sudo yum update -y
+            sudo yum install -y httpd.x86_64
+            sudo systemctl start httpd.service
+            sudo systemctl enable httpd.service
             echo ?Hello World from $(hostname -f)?
 
   DemoSecurityGroup:
-    Type: 'AWS::EC2::SecurityGroup'
+    Type: AWS::EC2::SecurityGroup
     Properties:
       VpcId: !Ref myVPC
       GroupDescription: SG to allow SSH access via port 22
       SecurityGroupIngress:
         - IpProtocol: tcp
-          FromPort: '22'
-          ToPort: '22'
-          CidrIp: '10.0.2.0/24'
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
         - IpProtocol: tcp
           FromPort: 80
           ToPort: 80
-          CidrIp: 10.0.2.0/24
+          CidrIp: 10.0.2.0/0
         - IpProtocol: tcp
           FromPort: 443
           ToPort: 443
@@ -113,5 +113,5 @@ Mappings:
 
 Outputs:
   DemoInstanceId:
-    Description: Instance Id 
+    Description: Apache Instance Id 
     Value: !Ref Ec2Instance02
