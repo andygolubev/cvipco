@@ -51,44 +51,11 @@ Resources:
         - Key: Name
           Value: private2
 
-  Ec2Instance01:
-    Type: AWS::EC2::Instance
-    Properties:
-      InstanceType: t2.micro
-      ImageId: ami-0b0dcb5067f052a63 # Amazon Linux 2 Kernel 5.10 AMI 2.0.20221103.3 x86_64 HVM gp2
-      Tags:
-        - Key: Name
-          Value: PublicSubnet1 instance t2
-      NetworkInterfaces:
-        - SubnetId: !Ref PublicSubnet1
-          DeviceIndex: 0
-
-  Ec2Instance02:
-    Type: AWS::EC2::Instance
-    Properties:
-      InstanceType: t3.micro
-      ImageId: ami-0b0dcb5067f052a63 #Amazon Linux 2 Kernel 5.10 AMI 2.0.20221103.3 x86_64 HVM gp2
-      Tags:
-        - Key: Name
-          Value: PublicSubnet2 instance t3  
-      NetworkInterfaces:
-        - SubnetId: !Ref PublicSubnet2
-          DeviceIndex: 0
-      UserData:
-        Fn::Base64: 
-          !Sub |
-            #!/bin/bash
-            sudo yum update -y
-            sudo yum install -y httpd.x86_64
-            sudo systemctl start httpd.service
-            sudo systemctl enable httpd.service
-            echo ?Hello World from $(hostname -f)?
-
-  DemoSecurityGroup:
+  MySecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
       VpcId: !Ref myVPC
-      GroupDescription: SG to allow SSH access via port 22
+      GroupDescription: SG to allow SSH and HTTP access via port 22, 80, 443
       SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: 22
@@ -105,6 +72,38 @@ Resources:
       Tags:
         - Key: Name
           Value: EC2-SG
+
+
+  Ec2Instance01:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t2.micro
+      ImageId: ami-0b0dcb5067f052a63 # Amazon Linux 2 Kernel 5.10 AMI 2.0.20221103.3 x86_64 HVM gp2
+      Tags:
+        - Key: Name
+          Value: PublicSubnet1 instance t2
+      SubnetId: !Ref PublicSubnet1
+
+  Ec2Instance02:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t3.micro
+      ImageId: ami-0b0dcb5067f052a63 #Amazon Linux 2 Kernel 5.10 AMI 2.0.20221103.3 x86_64 HVM gp2
+      Tags:
+        - Key: Name
+          Value: PublicSubnet2 instance t3  
+      SubnetId: !Ref PublicSubnet2
+      SecurityGroupIds:
+        - !Ref MySecurityGroup
+      UserData:
+        Fn::Base64: 
+          !Sub |
+            #!/bin/bash
+            sudo yum update -y
+            sudo yum install -y httpd.x86_64
+            sudo systemctl start httpd.service
+            sudo systemctl enable httpd.service
+            echo <?Hello World from $(hostname -f)?>
 
 Mappings:
   RegionMap:
