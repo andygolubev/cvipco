@@ -88,7 +88,12 @@ Resources:
     Type: AWS::EC2::Instance
     Properties:
       InstanceType: t3.micro
-      ImageId: ami-0b0dcb5067f052a63 #Amazon Linux 2 Kernel 5.10 AMI 2.0.20221103.3 x86_64 HVM gp2
+      ImageId:
+        Fn::FindInMap:
+        - RegionMap
+        - !Ref AWS::Region
+        - AMI
+      UserData:
       Tags:
         - Key: Name
           Value: PublicSubnet2 instance t3  
@@ -105,10 +110,19 @@ Resources:
             sudo systemctl enable httpd.service
             echo <?Hello World from $(hostname -f)?>
 
+
 Mappings:
   RegionMap:
-    us-east-1a:
+    us-east-1:
       AMI: ami-0b0dcb5067f052a63
+    us-west-1:
+      AMI: ami-bf5540df
+    eu-west-1:
+      AMI: ami-3bfab942
+    ap-southeast-1:
+      AMI: ami-e2adf99e
+    ap-southeast-2:
+      AMI: ami-43874721
 
 Outputs:
   DemoInstanceId:
