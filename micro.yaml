@@ -1,19 +1,19 @@
 AWSTemplateFormatVersion: "2010-09-09"
 
 Resources:
-  myVPC:
+  MyVPC:
     Type: AWS::EC2::VPC
     Properties:
       CidrBlock: 10.0.0.0/16
       Tags:
         - Key: Name
-          Value: myVPC
+          Value: MyVPC
 
 
   PublicSubnet1:
     Type: AWS::EC2::Subnet
     Properties:
-      VpcId: !Ref myVPC
+      VpcId: !Ref MyVPC
       CidrBlock: 10.0.1.0/24
       MapPublicIpOnLaunch: true
       Tags:
@@ -23,7 +23,7 @@ Resources:
   PublicSubnet2:
     Type: AWS::EC2::Subnet
     Properties:
-      VpcId: !Ref myVPC
+      VpcId: !Ref MyVPC
       CidrBlock: 10.0.2.0/24
       MapPublicIpOnLaunch: true
       Tags:
@@ -34,7 +34,7 @@ Resources:
   PrivateSubnet1:
     Type: AWS::EC2::Subnet
     Properties:
-      VpcId: !Ref myVPC
+      VpcId: !Ref MyVPC
       CidrBlock: 10.0.3.0/24
       MapPublicIpOnLaunch: false
       Tags:
@@ -44,7 +44,7 @@ Resources:
   PrivateSubnet2:
     Type: AWS::EC2::Subnet
     Properties:
-      VpcId: !Ref myVPC
+      VpcId: !Ref MyVPC
       CidrBlock: 10.0.4.0/24
       MapPublicIpOnLaunch: false
       Tags:
@@ -54,7 +54,7 @@ Resources:
   MySecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      VpcId: !Ref myVPC
+      VpcId: !Ref MyVPC
       GroupDescription: SG to allow SSH and HTTP access via port 22, 80, 443
       SecurityGroupIngress:
         - IpProtocol: tcp
@@ -73,6 +73,18 @@ Resources:
         - Key: Name
           Value: EC2-SG
 
+  MyInternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+      - Key: Name
+        Value: MyIGW
+
+  VPCGatewayAttachment:
+    Type: "AWS::EC2::VPCGatewayAttachment"
+    Properties:
+      VpcId: !Ref "MyVPC"
+      InternetGatewayId: !Ref "MyInternetGateway"
 
   Ec2Instance01:
     Type: AWS::EC2::Instance
