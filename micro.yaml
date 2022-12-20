@@ -86,7 +86,26 @@ Resources:
         - Key: Name
           Value: EC2-SG
 
+  MyRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId:  
+        Ref: MyVPC
+      Tags:
+      - Key: stack
+        Value: production
 
+  myRoute:
+    Type: AWS::EC2::Route
+    DependsOn: GatewayToInternet
+    Properties:
+       RouteTableId:
+         Ref: MyRouteTable
+       DestinationCidrBlock: 0.0.0.0/0
+       GatewayId:
+         Ref: MyInternetGateway
+
+  
 
   Ec2Instance01:
     Type: AWS::EC2::Instance
@@ -100,6 +119,22 @@ Resources:
 
   Ec2Instance02:
     Type: AWS::EC2::Instance
+    Metadata: 
+      AWS::CloudFormation::Init:
+        config: 
+          packages: 
+            yum:
+              httpd: []
+              php: []
+          files: 
+            /var/www/html/index.php:
+              content: !Sub |
+                <?php print "Hello world Abs was here!"; ?>
+          services: 
+            sysvinit:
+              httpd:
+                enabled: true
+                ensureRunning: true
     Properties:
       InstanceType: t3.micro
       ImageId:
@@ -114,15 +149,6 @@ Resources:
       SubnetId: !Ref PublicSubnet2
       SecurityGroupIds:
         - !Ref MySecurityGroup
-      UserData:
-        Fn::Base64: 
-          !Sub |
-            #!/bin/bash
-            sudo yum update -y
-            sudo yum install -y httpd.x86_64
-            sudo systemctl start httpd.service
-            sudo systemctl enable httpd.service
-            echo <?Hello World from $(hostname -f)?>
 
 
 Mappings:
