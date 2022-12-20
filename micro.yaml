@@ -143,7 +143,10 @@ Resources:
           files: 
             /var/www/html/index.php:
               content: !Sub |
-                <?php print "Hello world Abs was here!"; ?>
+                <?php print "Hello world from Cloud Formation!"; ?>
+              mode: '000600'
+              owner: apache
+              group: apache
           services: 
             sysvinit:
               httpd:
