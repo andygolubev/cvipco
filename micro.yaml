@@ -95,9 +95,9 @@ Resources:
       - Key: stack
         Value: production
 
-  myRoute:
+  MyRoute:
     Type: AWS::EC2::Route
-    DependsOn: GatewayToInternet
+    DependsOn: AttachGateway
     Properties:
        RouteTableId:
          Ref: MyRouteTable
@@ -105,7 +105,21 @@ Resources:
        GatewayId:
          Ref: MyInternetGateway
 
+  MySubnetRouteTableAssociationPublic1:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId:
+        Ref: PublicSubnet1
+      RouteTableId:
+        Ref: MyRouteTable
   
+  MySubnetRouteTableAssociationPublic2:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId:
+        Ref: PublicSubnet2
+      RouteTableId:
+        Ref: MyRouteTable
 
   Ec2Instance01:
     Type: AWS::EC2::Instance
@@ -142,7 +156,6 @@ Resources:
         - RegionMap
         - !Ref AWS::Region
         - AMI
-      UserData:
       Tags:
         - Key: Name
           Value: PublicSubnet2 instance t3  
