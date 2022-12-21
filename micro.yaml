@@ -121,7 +121,7 @@ Resources:
       RouteTableId:
         Ref: MyRouteTable
 
-  Ec2Instance01:
+  Ec2Instance01t2:
     Type: AWS::EC2::Instance
     Properties:
       InstanceType: t2.micro
@@ -131,7 +131,7 @@ Resources:
           Value: PublicSubnet1 instance t2
       SubnetId: !Ref PublicSubnet1
 
-  Ec2Instance02:
+  Ec2Instance02t3:
     Type: AWS::EC2::Instance
     Metadata: 
       AWS::CloudFormation::Init:
@@ -171,7 +171,7 @@ Resources:
             #!/bin/bash
             sudo yum -y install httpd
             sudo service httpd start
-            echo "<?Hello World from $(hostname -f)?>" > /var/www/html/index.html
+            echo "<html> Hello World from $(hostname -f) </html>" > /var/www/html/index.html
 
 
 Mappings:
@@ -189,5 +189,5 @@ Mappings:
 
 Outputs:
   DemoInstanceId:
-    Description: Apache Instance Id 
-    Value: !Ref Ec2Instance02
+    Description: Apache httpd Instance Id 
+    Value: !Ref Ec2Instance02t3
