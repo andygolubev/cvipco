@@ -165,6 +165,13 @@ Resources:
       SubnetId: !Ref PublicSubnet2
       SecurityGroupIds:
         - !Ref MySecurityGroup
+      UserData:
+        Fn::Base64: 
+          !Sub |
+            #!/bin/bash
+            sudo yum -y install httpd
+            sudo service httpd start
+            echo "<?Hello World from $(hostname -f)?>" > /var/www/html/index.html
 
 
 Mappings:
