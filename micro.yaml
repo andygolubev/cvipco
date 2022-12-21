@@ -173,10 +173,8 @@ Resources:
             service httpd start
             echo "<html> Hello World from $(hostname -f) </html>" > /var/www/html/index.html
             cd /tmp
-            wget https://raw.githubusercontent.com/andygolubev/cvipco/d0539a8d8849a4ea2ba794e4c14dcc2aa80b9231/site.tgz
-            tar -xvzf site.tgz -C /var/www/html/
-            
-
+            wget https://raw.githubusercontent.com/andygolubev/cvipco/master/site.tar.gz
+            tar -xvzf site.tar.gz -C /var/www/html/
 
 Mappings:
   RegionMap:
