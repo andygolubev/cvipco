@@ -193,3 +193,6 @@ Outputs:
   DemoInstanceId:
     Description: Apache httpd Instance Id 
     Value: !Ref Ec2Instance02t3
+  DemoInstancePublicIpAddress:
+    Value: !GetAtt Ec2Instance02t3.PublicIp
+    Description: Apache httpd Instance public ip
