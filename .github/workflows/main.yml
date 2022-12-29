@@ -1,11 +1,10 @@
 name: Deploy Stack
 
 on:
-  workflow_dispatch:
+  push:
     inputs:
       region:
         description: 'AWS Region'
-        required: true
         default: 'us-east-1'
 
 jobs:
