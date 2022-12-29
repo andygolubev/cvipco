@@ -37,3 +37,9 @@ jobs:
         name: MyStack
         template: micro.yaml
 
+    - name: Show output
+      id: showIP
+      run: |
+        aws cloudformation --region us-east-1 describe-stacks --stack-name MyStack
+
+
