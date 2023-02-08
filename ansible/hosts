@@ -1,0 +1,18 @@
+[kworker]
+3.8.209.229 ansible_ssh_private_key_file=~/.ssh/id_rsa_kworker_lab
+18.133.222.183 ansible_ssh_private_key_file=~/.ssh/id_rsa_kworker_lab
+
+
+[kmaster]
+18.134.248.234 ansible_ssh_private_key_file=~/.ssh/id_rsa_kworker_lab
+
+
+[kworker:vars]
+ansible_user=cloud_user
+#ansible_password=
+ansible_become_password=
+
+[kmaster:vars]
+ansible_user=cloud_user
+ansible_become_password=
+# ansible_password=
